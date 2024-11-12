@@ -12,7 +12,7 @@ load_dotenv()
 # app = Flask(__name__)
 app = Flask(__name__, template_folder=os.getcwd(), static_folder=os.getcwd(), static_url_path="/")    # ONLY FOR PRODUCTION
 app.secret_key = os.getenv("APP_SECRET_KEY")
-web_socket = SocketIO(app, cors_allowed_origins=["http://127.0.0.1:5000"], max_http_buffer_size=25000000)
+web_socket = SocketIO(app, cors_allowed_origins="*", max_http_buffer_size=25000000)
 
 @app.route("/")
 def home():
