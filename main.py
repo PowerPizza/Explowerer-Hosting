@@ -9,7 +9,6 @@ from flask_socketio.namespace import Namespace
 
 load_dotenv()
 
-# app = Flask(__name__)
 app = Flask(__name__, template_folder=os.getcwd(), static_folder=os.getcwd(), static_url_path="/")    # ONLY FOR PRODUCTION
 app.secret_key = os.getenv("APP_SECRET_KEY")
 web_socket = SocketIO(app, cors_allowed_origins="*", max_http_buffer_size=25000000)
@@ -61,6 +60,12 @@ class FileExplorerPoint(Namespace):
     def on_download_file(self, data_):
         emit("download_file", data_, to=self.currentlyConnected)
 
+    def on_upload_file(self, data_):
+        data_["to_"] = request.sid
+        emit("upload_file", data_, to=self.currentlyConnected)
+    def on_next_chunk(self, data_):
+        emit("next_chunk", data_, to=data_["to_"])
+
     def on_delete_media(self, data_):
         emit("delete_media", data_, to=self.currentlyConnected)
 
@@ -85,4 +90,4 @@ web_socket.on_namespace(FileExplorerPoint("/file_explorer"))
 
 if __name__ == '__main__':
     print("**LOCAL SERVER RUNNING AT : http://127.0.0.1:5000")
-    web_socket.run(app, host="127.0.0.1", port=5000, allow_unsafe_werkzeug=True, debug=True)
+    web_socket.run(app, host="127.0.0.1", port=5000, allow_unsafe_werkzeug=True)
